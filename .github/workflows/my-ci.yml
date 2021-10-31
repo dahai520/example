@@ -1,0 +1,30 @@
+name: My CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: shogo82148/actions-setup-mysql@v1
+      with:
+        mysql-version: '5.7'
+        root-password: ${{ secrets.DatabasePassword }}
+    - run: mysql -uroot -p${{ secrets.DatabasePassword }} -h127.0.0.1 -e 'SELECT version()'
+    - uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        # cache: 'npm'
+    - run: npm install
+    # - run: npm run build --if-present
+    - run: MYSQL_PWD=${{ secrets.DatabasePassword }} DATABASE=test_demo npm run test
