@@ -28,3 +28,12 @@ jobs:
     - run: npm install
     # - run: npm run build --if-present
     - run: MYSQL_PWD=${{ secrets.DatabasePassword }} DATABASE=test_demo npm run test
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+        files: /home/runner/work/dahai520/example/reports/clover.xml # optional
+        flags: unittests # optional
+        name: codecov-umbrella # optional
+        fail_ci_if_error: true # optional (default = false)
+        verbose: true # optional (default = false)
